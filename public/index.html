@@ -1,0 +1,332 @@
+<!doctype html>
+<html>
+<head>
+    <title>#recksplorer</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/icons/manifest.json">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    <meta name="msapplication-config" content="/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <style type="text/css">
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+    }
+    a
+    {
+        color: #3399ff;
+    }
+    #warning
+    {
+        display: none;
+        position: relative;
+        top: 0;
+        margin: 0 auto;
+        background-color: #FF073C;
+        color: #FFF;
+        padding: 10px;
+        width: 200px;
+        font-size: 12px;
+    }
+    #warning a
+    {
+        color: #FFF;
+    }
+    .haiku
+    {
+        margin-left: 5px;
+        font-style: italic;
+    }
+    #title
+    {
+        position: fixed;
+        top: 0;
+        right: 0;
+        font-size: 14px;
+        padding: 5px;
+        background-color: #891AFF;
+        color: #FFFFFF;
+    }
+    #info {
+        position: fixed;
+        top: 0;
+        left: 0;
+        font-size: 11px;
+        padding: 5px;
+        background: #FFFFFF;
+        border-bottom: 1px solid #891AFF;
+        border-right: 1px solid #891AFF;
+    }
+    .datatable td:nth-child(1) {  
+        font-weight: bold;
+        padding-right: 10px;
+        border-right: 1px solid #ddd;
+    }
+    #networkstats {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding: 5px;
+        font-size: 11px;
+        background: #FFFFFF;
+        border-top: 1px solid #891AFF;
+        border-right: 1px solid #891AFF;
+    }
+    #networkgraph {
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    </style>
+</head>
+<body>
+    <div id="title">#recksplorer</div>
+    <div id="info">Click on node or channel to see some things</div>
+    <div id="networkstats"></div>
+    <div id="networkgraph"></div>
+    <div id="warning">
+        Haiku:
+        <p class="haiku">
+            only a fool shall<br/>
+            find themselves try the lightning<br/>
+            strike mainnet fiercely<br/>
+        </p>
+        <a href="#" id="iunderstand">Okay. I understand.</a>
+        <a href="https://twitter.com/starkness/status/953434418948927488" style="float: right;">No, I don't!</a>
+    </div>
+
+<script type="text/javascript">
+
+var networkgraph;
+var usdbtc = 0;
+
+function LoadGraph(data)
+{
+    // Build array of nodes for vis.js
+    var nodes = [];
+    for (i = 0; i < data.nodes.length; i++)
+    {
+        var label = data.nodes[i].alias.replace(/\0/g, '').substring(0, 16);
+        
+        nodes.push({
+            id: data.nodes[i].pub_key,
+            label: label,
+            color: {
+                border: data.nodes[i].color,
+                background: '#FFFFFF'
+            },
+            shape: 'box'
+        });
+    }
+
+    // Build array of channels for vis.js
+    var capacity = 0;
+    var edges = [];
+    for (i = 0; i < data.edges.length; i++)
+    {
+        capacity += parseInt(data.edges[i].capacity);
+        edges.push({
+            id: data.edges[i].channel_id,
+            to: data.edges[i].node1_pub,
+            from: data.edges[i].node2_pub,
+            width: Math.log(data.edges[i].capacity)/5
+        });
+    }
+
+    // create a network
+    var container = document.getElementById('networkgraph');
+    var data = {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+    };
+
+    var options = {
+        physics: {
+            solver: 'forceAtlas2Based'
+        },
+        interaction: {
+            hover: true
+        }
+    };
+    
+    var network = new vis.Network(container, data, options);
+
+    network.on("select", function (params) {
+        if (params.nodes.length)
+            DisplayNodeInfo(params.nodes[0]);
+        else if (params.edges.length)
+            DisplayChannelInfo(params.edges[0]);
+        else
+            $('#info').text('Click on node or channel to see some things');
+    });
+
+    // Initialize stats
+    $.getJSON('https://blockchain.info/ticker', function(pdata) {
+        usdbtc = pdata.USD.last
+
+        $('#networkstats').html(`
+        <table class="datatable">
+            <tr>
+                <td>Nodes</td>
+                <td>${data.nodes.length}</td>
+            </tr>
+            <tr>
+                <td>Channels</td>
+                <td>${data.edges.length}</td>
+            </tr>
+            <tr>
+                <td>Total Capacity</td>
+                <td>${FormatCapacity(capacity)}</td>
+            </tr>
+            <tr>
+                <td>Total Fees</td>
+                <td style="font-size: 8px">too tiny</td>
+            </tr>
+        </table>`);
+    });
+}
+
+function FormatCapacity(cap)
+{
+    if (usdbtc)
+    {
+        var capusd = cap*usdbtc/Math.pow(10,8);
+        return `${cap} sat (${capusd.toFixed(2)} USD)`;
+    }
+    else
+        return `${cap} sat`;
+}
+
+function FindNode(pubkey)
+{
+    for (i = 0; i < networkgraph.nodes.length; i++)
+    {
+        if (networkgraph.nodes[i].pub_key == pubkey)
+            return networkgraph.nodes[i];
+    }
+
+    return undefined;
+}
+
+function FindChannel(chid)
+{
+    for (i = 0; i < networkgraph.edges.length; i++)
+    {
+        if (networkgraph.edges[i].channel_id == chid)
+            return networkgraph.edges[i];
+    }
+
+    return undefined;
+}
+
+function DisplayNodeInfo(pubkey)
+{
+    var node = FindNode(pubkey);
+
+    if (!node)
+        return;
+    
+    var uri = 'unknown';
+    if (node.addresses.length)
+        uri = node.pub_key + '@' + node.addresses[0].addr;
+    
+    $('#info').html(`
+    <table class="datatable">
+        <tr>
+            <td>PubKey</td>
+            <td>${node.pub_key}</td>
+        </tr>
+        <tr>
+            <td>Alias</td>
+            <td>${node.alias.replace(/\0/g, '')}</td>
+        </tr>
+        <tr>
+            <td>URI</td>
+            <td>${uri}</td>
+        </tr>
+        <tr>
+            <td>Last Update</td>
+            <td>${moment(node.last_update*1000).format('MMMM Do YYYY, h:mm:ss a')}</td>
+        </tr>
+        <tr>
+            <td>Color</td>
+            <td>${node.color}</td>
+        </tr>
+    </table>
+    `);
+}
+
+function DisplayChannelInfo(chid)
+{
+    var ch = FindChannel(chid);
+
+    if (!ch)
+        return;
+    
+    $('#info').html(`
+    <table class="datatable">
+        <tr>
+            <td>Channel ID</td>
+            <td>${ch.channel_id}</td>
+        </tr>
+        <tr>
+            <td>Channel Point</td>
+            <td><a href="https://www.smartbit.com.au/tx/${ch.chan_point.split(':')[0]}" target="_blank">${ch.chan_point}</a></td>
+        </tr>
+        <tr>
+            <td>Last Update</td>
+            <td>${moment(ch.last_update*1000).format('MMMM Do YYYY, h:mm:ss a')}</td>
+        </tr>
+        <tr>
+            <td>Node1</td>
+            <td>${ch.node1_pub}</td>
+        </tr>
+        <tr>
+            <td>Node2</td>
+            <td>${ch.node2_pub}</td>
+        </tr>
+        <tr>
+            <td>Capacity</td>
+            <td>${FormatCapacity(ch.capacity)}</td>
+        </tr>
+    </table>
+    `);
+}
+
+$.getJSON('/networkgraph', function(data)
+{
+    networkgraph = data;
+    LoadGraph(networkgraph);
+});
+
+// Warning
+$(document).ready(function() {
+    if (!Cookies.get('warned') || moment().diff(+Cookies.get('warned')) > 1000*60*60)
+    {
+        $('#warning').show();
+        $('#iunderstand').click(function () {
+            Cookies.set('warned', +moment());
+            $('#warning').hide();
+        });
+    }
+})
+
+</script>
+
+
+</body>
+</html>
