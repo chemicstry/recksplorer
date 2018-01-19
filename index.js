@@ -50,6 +50,9 @@ app.get('/getinvoice', function(req, res) {
     if (!value || isNaN(value))
         return res.status(500).send('Malformed tip value');
 
+    if (value > 100000000)
+        return res.status(500).send('Whoah, thanks for generosity but tips under 10 BTC will do!');
+
     lightning.AddInvoice({
         memo: "LN Explorer Tips",
         value: value
