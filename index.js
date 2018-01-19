@@ -47,11 +47,11 @@ app.get('/networkgraph', function(req, res) {
 app.get('/getinvoice', function(req, res) {
     var value = parseInt(req.query.value);
 
-    if (!value || isNaN(value))
+    if (!value || isNaN(value) || value < 1)
         return res.status(500).send('Malformed tip value');
 
-    if (value > 100000000)
-        return res.status(500).send('Whoah, thanks for generosity but tips under 10 BTC will do!');
+    if (value > 4294967)
+        return res.status(500).send('Whoah, thanks for generosity but tips under uint32 limit will do! (4,294,967,295 msat to be precise)');
 
     lightning.AddInvoice({
         memo: "LN Explorer Tips",
@@ -60,7 +60,10 @@ app.get('/getinvoice', function(req, res) {
         if (!err)
             res.send(resp);
         else
+        {
+            console.log(err);
             res.status(500).send('Error generating invoice');
+        }
     });
 });
 
