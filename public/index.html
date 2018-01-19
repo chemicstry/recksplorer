@@ -101,6 +101,24 @@
         border-top: 1px solid #891AFF;
         border-left: 1px solid #891AFF;
     }
+    .lntip input {
+        font-size: 11px;
+        margin: 0;
+        padding: 0 2px 0 2px;
+        border: none;
+        background-color: #ddd;
+        width: 85px;
+    }
+    .lntip button
+    {
+        font-size: 11px;
+        margin: 0;
+        padding: 0 2px 0 2px;
+        border: none;
+        background-color: #891AFF;
+        color: #FFF;
+        cursor: pointer;
+    }
     </style>
 </head>
 <body>
@@ -108,9 +126,20 @@
     <div id="info">Click on node or channel to see some things</div>
     <div id="networkstats"></div>
     <div id="credits">
-        <b>BTC:</b> 39AqCMaBw4nzNxQrPsqYeaNrCC2msrFu6Y<br/>
-        <b>LN:</b> soon<br/>
-        <b>Source:</b> <a href="https://github.com/chemicstry/recksplorer" target="_blank">https://github.com/chemicstry/recksplorer</a>
+        <table class="datatable">
+            <tr>
+                <td>BTC</td>
+                <td>39AqCMaBw4nzNxQrPsqYeaNrCC2msrFu6Y</td>
+            </tr>
+            <tr>
+                <td>LN</td>
+                <td class="lntip"><input type="text" class="lntipvalue" placeholder="Amount (satoshi)"/><button>Get Invoice</button></td>
+            </tr>
+            <tr>
+                <td>Source</td>
+                <td><a href="https://github.com/chemicstry/recksplorer" target="_blank">https://github.com/chemicstry/recksplorer</a></td>
+            </tr>
+        </table>
     </div>
     <div id="networkgraph"></div>
     <div id="warning">
@@ -338,7 +367,63 @@ $(document).ready(function() {
             $('#warning').hide();
         });
     }
-})
+});
+
+// LN tips
+$(document).ready(function() {
+    function ShowInvoice(invoice)
+    {
+        $('.lntip').html(`
+            PayReq: <input type="text" value="${invoice}" readonly="readonly" /><button class="copy">Copy</button>
+        `);
+
+        $('.lntip .copy').click(function() {
+            $('.lntip input').select();
+            document.execCommand("copy");
+        });
+    }
+
+    // Converts uint8 json array to hex string
+    function RHashArrayToHexString(rhash)
+    {
+        return rhash.map(function(i) {
+            return ('0' + i.toString(16)).slice(-2);
+        }).join('');
+    }
+
+    function PaymentComplete()
+    {
+        $('.lntip').text(`Got it! Thanks!`);
+    }
+
+    function WaitForPayment(rhash)
+    {
+        $.get('/invoicestatus', {rhash: rhash}).done(function(status) {
+            if (status == 'true' || status == true)
+                PaymentComplete();
+            else
+                setTimeout(function() {
+                    WaitForPayment(rhash);
+                }, 2000);
+        });
+    }
+
+    $('.lntip button').click(function () {
+        var value = parseInt($('.lntip input').val());
+
+        // Request backend for invoice
+        $.get('/getinvoice', {value: value}).done(function(data) {
+            // Display invoice for client
+            ShowInvoice(data.payment_request);
+
+            // Get rhash string and start checking for payment
+            var rhash = RHashArrayToHexString(data.r_hash.data);
+            WaitForPayment(rhash);
+        }).fail(function(err) {
+            alert("Error: " + err.responseText);
+        });
+    });
+});
 
 </script>
 

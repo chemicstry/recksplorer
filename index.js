@@ -33,6 +33,7 @@ app.use(function(req, res, next) {
     next();
 });
 
+// CORS endpoint for network graph
 app.get('/networkgraph', function(req, res) {
     // Allow CORS
     res.header("Access-Control-Allow-Origin", "*");
@@ -40,6 +41,47 @@ app.get('/networkgraph', function(req, res) {
 
     // Send data
     res.send(graphdata);
+});
+
+// Create payment invoice
+app.get('/getinvoice', function(req, res) {
+    var value = parseInt(req.query.value);
+
+    if (!value || isNaN(value))
+        return res.status(500).send('Malformed tip value');
+
+    lightning.AddInvoice({
+        memo: "LN Explorer Tips",
+        value: value
+    }, function(err, resp) {
+        if (!err)
+            res.send(resp);
+        else
+            res.status(500).send('Error generating invoice');
+    });
+});
+
+function isHexString(str)
+{
+    var re = /[0-9A-Fa-f]{6}/g;
+    return re.test(str);
+}
+
+// Reply with invoice status
+app.get('/invoicestatus', function(req, res) {
+    var rhash = req.query.rhash;
+
+    if (!isHexString(rhash) || rhash.length != 64)
+        return res.status(500).send('Malformed rhash');
+
+    lightning.LookupInvoice({
+        r_hash_str: rhash
+    }, function(err, resp) {
+        if (!err)
+            res.send(resp.settled);
+        else
+            res.status(500).send('Error checking invoice status');
+    });
 });
 
 // Serve static content
