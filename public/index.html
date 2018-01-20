@@ -73,6 +73,9 @@
         padding-right: 10px;
         border-right: 1px solid #ddd;
     }
+    .tableindent {
+        padding-left: 10px;
+    }
     #networkstats {
         position: fixed;
         bottom: 0;
@@ -328,6 +331,10 @@ function DisplayChannelInfo(chid)
             <td>${ch.channel_id}</td>
         </tr>
         <tr>
+            <td>Capacity</td>
+            <td>${FormatCapacity(ch.capacity)}</td>
+        </tr>
+        <tr>
             <td>Channel Point</td>
             <td><a href="https://www.smartbit.com.au/tx/${ch.chan_point.split(':')[0]}" target="_blank">${ch.chan_point}</a></td>
         </tr>
@@ -335,17 +342,46 @@ function DisplayChannelInfo(chid)
             <td>Last Update</td>
             <td>${moment(ch.last_update*1000).format('MMMM Do YYYY, h:mm:ss a')}</td>
         </tr>
+        <tr style="height: 10px;"></tr>
         <tr>
             <td>Node1</td>
             <td>${ch.node1_pub}</td>
+        </tr>
+        <tr>
+            <td class="tableindent">- Time Lock Delta</td>
+            <td>${ch.node1_policy.time_lock_delta}</td>
+        </tr>
+        <tr>
+            <td class="tableindent">- Minimum HTLC</td>
+            <td>${ch.node1_policy.min_htlc}</td>
+        </tr>
+        <tr>
+            <td class="tableindent">- Base Fee</td>
+            <td>${ch.node1_policy.fee_base_msat} msat</td>
+        </tr>
+        <tr>
+            <td class="tableindent">- Fee Rate</td>
+            <td>${ch.node1_policy.fee_rate_milli_msat} msat</td>
         </tr>
         <tr>
             <td>Node2</td>
             <td>${ch.node2_pub}</td>
         </tr>
         <tr>
-            <td>Capacity</td>
-            <td>${FormatCapacity(ch.capacity)}</td>
+            <td class="tableindent">- Time Lock Delta</td>
+            <td>${ch.node2_policy.time_lock_delta}</td>
+        </tr>
+        <tr>
+            <td class="tableindent">- Minimum HTLC</td>
+            <td>${ch.node2_policy.min_htlc}</td>
+        </tr>
+        <tr>
+            <td class="tableindent">- Base Fee</td>
+            <td>${ch.node2_policy.fee_base_msat} msat</td>
+        </tr>
+        <tr>
+            <td class="tableindent">- Fee Rate</td>
+            <td>${ch.node2_policy.fee_rate_milli_msat} msat</td>
         </tr>
     </table>
     `);
