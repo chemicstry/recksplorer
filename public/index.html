@@ -190,7 +190,7 @@ function LoadGraph(data)
             id: data.edges[i].channel_id,
             to: data.edges[i].node1_pub,
             from: data.edges[i].node2_pub,
-            width: Math.log(data.edges[i].capacity)/5
+            width: Math.log10(data.edges[i].capacity)/4
         });
     }
 
