@@ -94,5 +94,5 @@ app.get('/invoicestatus', function(req, res) {
 app.use(express.static('public'));
 
 // Start server
-app.listen(80, () => console.log('Network explorer running on port 80!'))
+app.listen(3000, () => console.log('Network explorer running on port 80!'))
 
