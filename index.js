@@ -1,5 +1,39 @@
-const express = require('express')
-const app = express()
+const commandLineArgs = require('command-line-args');
+const optionDefinitions = require('./options.js');
+const getUsage = require('command-line-usage');
+const express = require('express');
+const moment = require('moment');
+const path = require('path');
+const fs = require('fs');
+const app = express();
+
+// Usage
+const sections = [
+    {
+        header: 'Lightning Network Explorer',
+        content: 'Makes Bitcoin Great Again!'
+    },
+    {
+        header: 'Options',
+        optionList: optionDefinitions
+    }
+];
+const usage = getUsage(sections);
+
+// Options
+const options = commandLineArgs(optionDefinitions);
+
+// Print usage
+if (options.help)
+{
+    console.log(usage);
+    process.exit();
+}
+
+// Create log dir if it does not exist
+if (!fs.existsSync(options.logDir)){
+    fs.mkdirSync(options.logDir);
+}
 
 // setup lightning client
 const lndHost = "localhost:10009";
@@ -23,7 +57,20 @@ function UpdateNetworkGraph()
 }
 
 UpdateNetworkGraph();
-setInterval(UpdateNetworkGraph, 5000);
+setInterval(UpdateNetworkGraph, options.updateInterval);
+
+// Saves network graph to file
+function SaveGraph()
+{
+    var filepath = path.join(options.logDir, 'networkgraph_' + moment().format('YYYY-MM-DD_HH-mm') + '.json');
+    fs.writeFile(filepath, JSON.stringify(graphdata), function (err) {
+        if (err)
+            console.log(err);
+        else
+            console.log("Saved network graph to " + filepath);
+    });
+}
+setInterval(SaveGraph, options.graphLogInterval);
 
 //FORCE SSL
 app.use(function(req, res, next) {
@@ -94,5 +141,5 @@ app.get('/invoicestatus', function(req, res) {
 app.use(express.static('public'));
 
 // Start server
-app.listen(3000, () => console.log('Network explorer running on port 80!'))
+app.listen(options.port, () => console.log('Network explorer running on port 80!'))
 
