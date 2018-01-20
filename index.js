@@ -2,6 +2,7 @@ const commandLineArgs = require('command-line-args');
 const optionDefinitions = require('./options.js');
 const getUsage = require('command-line-usage');
 const express = require('express');
+const cacheControl = require('express-cache-controller');
 const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
@@ -72,6 +73,12 @@ function SaveGraph()
 }
 setInterval(SaveGraph, options.graphLogInterval);
 
+// Setup cache
+app.use(cacheControl({
+    public: true,
+    maxAge: 60
+}));
+
 //FORCE SSL
 app.use(function(req, res, next) {
     if (req.headers['x-forwarded-proto'] === 'http') {
@@ -92,6 +99,11 @@ app.get('/networkgraph', function(req, res) {
 
 // Create payment invoice
 app.get('/getinvoice', function(req, res) {
+    // Disable cache
+    res.cacheControl = {
+        noCache: true
+    };
+
     var value = parseInt(req.query.value);
 
     if (!value || isNaN(value) || value < 1)
@@ -122,6 +134,11 @@ function isHexString(str)
 
 // Reply with invoice status
 app.get('/invoicestatus', function(req, res) {
+    // Disable cache
+    res.cacheControl = {
+        noCache: true
+    };
+
     var rhash = req.query.rhash;
 
     if (!isHexString(rhash) || rhash.length != 64)
