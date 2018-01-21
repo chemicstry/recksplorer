@@ -3,6 +3,10 @@ import GraphMap from './GraphMap.jsx';
 import ObjectInfo from './ObjectInfo.jsx';
 import NodeInfo from './NodeInfo.jsx';
 import ChannelInfo from './ChannelInfo.jsx';
+import NetworkInfo from './NetworkInfo.jsx';
+import Credits from './Credits.jsx';
+import Warning from './Warning.jsx';
+import Title from './Title.jsx';
 import { ObjectTypes } from './DataStore.js';
 import { observer } from 'mobx-react';
 import styles from './App.css';
@@ -14,6 +18,7 @@ export default class App extends React.Component {
 
     componentDidMount() {
         this.props.store.fetchData();
+        this.props.store.fetchPrice();
     }
 
     render() {
@@ -35,6 +40,10 @@ export default class App extends React.Component {
                     )}
                 </ObjectInfo>
             ) : ''}
+            <NetworkInfo store={store} />
+            <Title>#recksplorer</Title>
+            <Credits />
+            <Warning />
         </div>
         );
     }

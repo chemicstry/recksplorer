@@ -7,6 +7,13 @@ module.exports = [
         description: 'Port number for http server'
     },
     {
+        name: 'host',
+        alias: 'h',
+        type: String,
+        defaultValue: '0.0.0.0',
+        description: 'Host (IP) for http server'
+    },
+    {
         name: 'updateInterval',
         type: Number,
         defaultValue: 60*1000,
@@ -25,8 +32,12 @@ module.exports = [
         description: 'Interval between network graph logging to file (in milliseconds)'
     },
     {
+        name: 'dummyDataPath',
+        type: String,
+        description: 'Provide a file with dummy data to use instead of LND API'
+    },
+    {
         name: 'help',
-        alias: 'h',
         type: Boolean,
         description: 'Prints usage information'
     }

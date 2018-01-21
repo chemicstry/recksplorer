@@ -26,8 +26,11 @@ module.exports = function (app, options) {
         });
     }
 
-    UpdateNetworkGraph();
-    setInterval(UpdateNetworkGraph, options.updateInterval);
+    if (!options.dummyDataPath)
+    {
+        UpdateNetworkGraph();
+        setInterval(UpdateNetworkGraph, options.updateInterval);
+    }
 
     // Saves network graph to file
     function SaveGraph()
@@ -57,7 +60,10 @@ module.exports = function (app, options) {
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
         // Send data
-        res.send(graphdata);
+        if (options.dummyDataPath)
+            res.send(fs.readFileSync(options.dummyDataPath));
+        else
+            res.send(graphdata);
     });
 
     // Create payment invoice

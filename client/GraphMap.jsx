@@ -84,7 +84,9 @@ export default class App extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (this.network)
-            this.network.stabilize();
+        {
+            setTimeout(() => this.network.fit(), 500);
+        }
     }
 
     render() {

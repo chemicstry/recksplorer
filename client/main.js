@@ -6,6 +6,11 @@ import { DataStore } from './DataStore.js';
 // Create mobx datastore
 var store = new DataStore();
 
+window.load = function(json)
+{
+    store.networkData = json;
+}
+
 // Remove default css styles
 import 'normalize.css';
 

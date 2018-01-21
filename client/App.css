@@ -17,3 +17,10 @@ a
 {
     color: #3399ff;
 }
+
+.datatable td:nth-child(1)
+{
+    font-weight: bold;
+    padding-right: 10px;
+    border-right: 1px solid #ddd;
+}

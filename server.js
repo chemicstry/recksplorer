@@ -34,7 +34,6 @@ if (options.help)
 }
 
 const isDeveloping = process.env.NODE_ENV !== 'production';
-const port = isDeveloping ? 3000 : process.env.PORT;
 const app = express();
 
 if (isDeveloping) {
@@ -74,9 +73,9 @@ if (isDeveloping) {
 // Start main app
 main(app, options);
 
-app.listen(port, '0.0.0.0', function onStart(err) {
+app.listen(options.port, options.host, function onStart(err) {
     if (err)
         console.log(err);
 
-    console.info('==> 🌎 Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.', port, port);
+    console.info('==> 🌎 Listening on port %s. Open up http://%s:%s/ in your browser.', options.port, options.host, options.port);
 });
