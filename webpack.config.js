@@ -5,7 +5,7 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    devtool: 'eval-source-map',
+    devtool: 'source-map',
     entry: ['webpack-hot-middleware/client?reload=true',
     path.join(__dirname, 'client/main.js')],
     output: {
@@ -37,7 +37,8 @@ module.exports = {
                         "react-hmre"
                     ],
                     "plugins": [
-                        "transform-runtime"
+                        "transform-runtime",
+                        "transform-decorators-legacy"
                     ]
                 }
             },

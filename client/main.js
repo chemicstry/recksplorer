@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App.jsx';
-import { createStore } from 'redux';
+import { DataStore } from './DataStore.js';
 
-// Import the reducer and create a store
-import { reducer } from './AppRedux'
-const store = createStore(reducer)
+// Create mobx datastore
+var store = new DataStore();
 
 // Remove default css styles
 import 'normalize.css';
