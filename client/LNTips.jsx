@@ -1,6 +1,5 @@
 import React from 'react';
 import AppStyles from './App.css';
-import { observer } from 'mobx-react';
 import Axios from 'axios';
 import { RHashArrayToHexString, ParseAxiosError } from './Utils.js';
 
@@ -32,7 +31,6 @@ var styles = {
     }
 }
 
-@observer
 export default class LNTips extends React.Component {
     state = {
         paymentState: PaymentState.PAYMENT_STATE_WAITING_FOR_INPUT,

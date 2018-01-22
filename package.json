@@ -14,6 +14,7 @@
     "command-line-usage": "^4.1.0",
     "express": "^4.16.2",
     "express-cache-controller": "^1.1.0",
+    "font-awesome": "^4.7.0",
     "grpc": "^1.8.0",
     "js-cookie": "^2.2.0",
     "mobx": "^3.4.1",
@@ -22,7 +23,9 @@
     "normalize.css": "^7.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-fontawesome": "^1.6.1",
     "typeface-roboto": "0.0.50",
+    "url-loader": "^0.6.2",
     "vis": "^4.21.0",
     "vis-react": "^0.3.0"
   },

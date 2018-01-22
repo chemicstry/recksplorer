@@ -1,6 +1,7 @@
 import React from 'react';
 import Graph from 'vis-react';
-import { computed } from 'mobx';
+import { ObjectTypes } from './DataStore.js';
+import { computed, autorun } from 'mobx';
 import { observer } from 'mobx-react';
 
 @observer
@@ -58,7 +59,10 @@ export default class App extends React.Component {
                 id: data.nodes[i].pub_key,
                 label: label,
                 color: {
-                    border: data.nodes[i].color
+                    border: data.nodes[i].color,
+                    highlight: {
+                        border: data.nodes[i].color
+                    }
                 }
             });
         }
@@ -70,7 +74,9 @@ export default class App extends React.Component {
                 to: data.edges[i].node1_pub,
                 from: data.edges[i].node2_pub,
                 width: Math.log(data.edges[i].capacity)/6,
-                color: {inherit:'both'}
+                color: {
+                    inherit:'both'
+                }
             });
         }
 
@@ -80,6 +86,32 @@ export default class App extends React.Component {
     getNetwork(network)
     {
         this.network = network;
+    }
+
+    componentDidMount()
+    {
+        this.selectObserver = autorun(() => {
+            var object = this.props.store.selectedObjectData;
+
+            if (!this.network || !object)
+                return;
+            
+            console.log(object);
+
+            if (object.type == ObjectTypes.NODE)
+            {
+                this.network.selectNodes([object.pub_key]);
+            }
+            else
+            {
+                this.network.setSelection({
+                    nodes: [object.node1_pub, object.node2_pub],
+                    edges: [object.channel_id]
+                }, {
+                    highlightEdges: false
+                });
+            }
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {

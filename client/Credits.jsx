@@ -4,14 +4,9 @@ import LNTips from './LNTips.jsx';
 
 var styles = {
     container:{
-        position: 'fixed',
-        bottom: 0,
-        right: 0,
         padding: '5px',
         fontSize: '11px',
-        backgroundColor: '#FFFFFF',
-        borderTop: '1px solid #891AFF',
-        borderLeft: '1px solid #891AFF'
+        backgroundColor: '#FFFFFF'
     },
 }
 
