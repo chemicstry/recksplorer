@@ -60,3 +60,6 @@ typings/
 # lnd files
 lnd.cert
 admin.macaroon
+
+# built files
+dist/

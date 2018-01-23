@@ -4,6 +4,27 @@ import { ObjectTypes } from './DataStore.js';
 import { computed, autorun } from 'mobx';
 import { observer } from 'mobx-react';
 
+import FontAwesome from 'react-fontawesome';
+import FA from 'font-awesome/css/font-awesome.css';
+
+var styles = {
+    container: {
+        position: 'relative',
+        width: '100%',
+        height: '100%'
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+}
+
 @observer
 export default class App extends React.Component {
     state = {
@@ -37,8 +58,15 @@ export default class App extends React.Component {
                     this.props.store.selectObject(event.edges[0]);
                 else
                     this.props.store.selectObject(undefined);
+            },
+            // Called when initial stabilization is complete
+            stabilizationIterationsDone: (event) => {
+                this.setState({
+                    loading: false
+                });
             }
-        }
+        },
+        loading: true
     };
 
     // Transforms network data into vis.js data format
@@ -80,6 +108,12 @@ export default class App extends React.Component {
             });
         }
 
+        // Notify that graph changed and will need to be restabilised
+        this.graphChanged = true;
+        this.setState({
+            loading: true
+        });
+
         return graph;
     }
 
@@ -95,8 +129,6 @@ export default class App extends React.Component {
 
             if (!this.network || !object)
                 return;
-            
-            console.log(object);
 
             if (object.type == ObjectTypes.NODE)
             {
@@ -114,16 +146,29 @@ export default class App extends React.Component {
         });
     }
 
+    componentWillReact() {
+        
+    }
+
     componentDidUpdate(prevProps, prevState) {
-        if (this.network)
+        // Stabilize if graph changed
+        if (this.network && this.graphChanged)
         {
-            setTimeout(() => this.network.fit(), 500);
+            this.network.stabilize();
+            this.graphChanged = false;
         }
     }
 
     render() {
         return (
-            <Graph graph={this.graphData} options={this.state.options} events={this.state.events} getNetwork={(network) => this.getNetwork(network)} />
+            <div style={styles.container}>
+                <Graph graph={this.graphData} options={this.state.options} events={this.state.events} getNetwork={(network) => this.getNetwork(network)} />
+                { this.state.loading ? (
+                <div style={styles.overlay}>
+                    <FontAwesome name='spinner' pulse size='2x' cssModule={FA} />
+                </div>
+                ) : '' }
+            </div>
         );
     }
 }
