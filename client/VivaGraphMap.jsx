@@ -166,7 +166,8 @@ export default class VivaGraphMap extends React.Component {
                 {
                     var linkid = getVivaLinkID(this.prevSelection.node1_pub, this.prevSelection.node2_pub);
 
-                    // Remove link highlight 
+                    // Remove link highlight
+                    this.graphics.getLinkUI(linkid).children[0].classList.remove(mapstyles.selected);
                     this.graphics.getLinkUI(linkid).children[1].classList.remove(mapstyles.selected);
 
                     // Remove node highlight
@@ -197,15 +198,16 @@ export default class VivaGraphMap extends React.Component {
                 {
                     var linkid = getVivaLinkID(object.node1_pub, object.node2_pub);
 
-                    // Add link highlight 
+                    // Add link highlight
+                    this.graphics.getLinkUI(linkid).children[0].classList.add(mapstyles.selected);
                     this.graphics.getLinkUI(linkid).children[1].classList.add(mapstyles.selected);
 
                     // Add node highlight
                     this.graphics.getNodeUI(object.node1_pub).children[0].classList.add(mapstyles.selected);
-                    this.graphics.getNodeUI(object.node2_pub).children[1].classList.add(mapstyles.selected);
+                    this.graphics.getNodeUI(object.node2_pub).children[0].classList.add(mapstyles.selected);
                 }
             }
-            
+
             this.prevSelection = object;
 
             // Hide other nodes/channels if something is selected
