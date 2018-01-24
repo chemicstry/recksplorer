@@ -5,13 +5,16 @@ import moment from 'moment';
 
 var styles = {
     container:{
-        position: 'relative',
+        position: 'absolute',
         top: 0,
-        margin: '0 auto',
+        width: '100vw',
+        display: 'flex',
+        justifyContent: 'center'
+    },
+    note: {
         backgroundColor: '#FF073C',
         color: '#FFF',
         padding: '10px',
-        width: '200px',
         fontSize: '12px'
     },
     haiku: {
@@ -45,14 +48,16 @@ export default class Warning extends React.Component {
         if (this.state.displayed)
             return (
             <div style={styles.container}>
-                Haiku:
-                <p style={styles.haiku}>
-                    only a fool shall<br/>
-                    find themselves try the lightning<br/>
-                    strike mainnet fiercely<br/>
-                </p>
-                <a href="javascript:void(0)" onClick={() => this.handleClick()} style={styles.link}>Okay. I understand.</a>
-                <a href="https://twitter.com/starkness/status/953434418948927488" style={{...styles.floatRight,...styles.link}}>No, I don't!</a>
+                <div style={styles.note}>
+                    Haiku:
+                    <p style={styles.haiku}>
+                        only a fool shall<br/>
+                        find themselves try the lightning<br/>
+                        strike mainnet fiercely<br/>
+                    </p>
+                    <a href="javascript:void(0)" onClick={() => this.handleClick()} style={styles.link}>Okay. I understand.</a>
+                    <a href="https://twitter.com/starkness/status/953434418948927488" style={{...styles.floatRight,...styles.link}}>No, I don't!</a>
+                </div>
             </div>
             );
         else
