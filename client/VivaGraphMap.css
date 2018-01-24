@@ -1,0 +1,34 @@
+
+.node {
+    stroke-width: 1;
+    fill: #FFF;
+}
+
+.node.selected
+{
+    stroke-width: 2;
+}
+
+.nodelabel
+{
+    pointer-events: none;
+    text-anchor: middle;
+    font-family: Roboto, sans-serif;
+    font-size: 7px;
+}
+
+.link {
+    stroke-width: 0.5;
+}
+
+.link.selected {
+    stroke-width: 1;
+}
+
+.hide .node:not(.selected) {
+    stroke: #ccc;
+}
+
+.hide .link:not(.selected) {
+    stroke: #ccc;
+}
