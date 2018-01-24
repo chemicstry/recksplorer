@@ -10,7 +10,7 @@ module.exports = [
         name: 'host',
         alias: 'h',
         type: String,
-        defaultValue: '0.0.0.0',
+        defaultValue: '::',
         description: 'Host (IP) for http server'
     },
     {
