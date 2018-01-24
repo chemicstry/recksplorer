@@ -9,9 +9,8 @@ import FA from 'font-awesome/css/font-awesome.css';
 
 var styles = {
     container: {
-        position: 'relative',
-        width: '100%',
-        height: '100%'
+        width: '100vw',
+        height: '100vh'
     },
     overlay: {
         position: 'absolute',
@@ -26,7 +25,7 @@ var styles = {
 }
 
 @observer
-export default class App extends React.Component {
+export default class VisGraphMap extends React.Component {
     state = {
         options: {
             physics: {
@@ -78,11 +77,11 @@ export default class App extends React.Component {
         };
 
         var data = this.props.store.networkData;
-    
+
         for (var i = 0; i < data.nodes.length; i++)
         {
             var label = data.nodes[i].alias.replace(/\0/g, '').substring(0, 16);
-            
+
             graph.nodes.push({
                 id: data.nodes[i].pub_key,
                 label: label,
@@ -94,7 +93,7 @@ export default class App extends React.Component {
                 }
             });
         }
-    
+
         for (var i = 0; i < data.edges.length; i++)
         {
             graph.edges.push({
@@ -146,8 +145,9 @@ export default class App extends React.Component {
         });
     }
 
-    componentWillReact() {
-        
+    componentWillUnmount() {
+        // Stop observer
+        this.selectObserver();
     }
 
     componentDidUpdate(prevProps, prevState) {

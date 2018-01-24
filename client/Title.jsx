@@ -5,9 +5,6 @@ import { observer } from 'mobx-react';
 
 var styles = {
     container:{
-        position: 'fixed',
-        top: 0,
-        right: 0,
         padding: '5px',
         fontSize: '14px',
         backgroundColor: '#891AFF',

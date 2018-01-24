@@ -1,6 +1,7 @@
 import React from 'react';
 import FixedContainer from './FixedContainer.jsx';
-import GraphMap from './GraphMap.jsx';
+import VisGraphMap from './VisGraphMap.jsx';
+import VivaGraphMap from './VivaGraphMap.jsx';
 import ObjectInfo from './ObjectInfo.jsx';
 import NodeInfo from './NodeInfo.jsx';
 import ChannelInfo from './ChannelInfo.jsx';
@@ -16,22 +17,38 @@ import 'typeface-roboto';
 
 @observer
 export default class App extends React.Component {
-    state = {}
+    state = {
+        map: 'viva'
+    }
 
     componentDidMount() {
         this.props.store.fetchData();
         this.props.store.fetchPrice();
     }
 
+    onMapChange(e)
+    {
+        this.setState({map: e.target.value});
+    }
+
     render() {
         const store = this.props.store;
         const selectedObject = store.selectedObjectData;
 
+        var map;
+        switch (this.state.map)
+        {
+            case 'vis':
+                map = (<VisGraphMap store={store}/>);
+                break;
+            case 'viva':
+                map = (<VivaGraphMap store={store}/>);
+                break;
+        }
+
         return (
         <div className={styles.app}>
-            <div className={styles.map}>
-                <GraphMap store={store}/>
-            </div>
+            {map}
 
             <FixedContainer position='bottom-left' border='top-right'>
                 {selectedObject ? (
@@ -50,6 +67,10 @@ export default class App extends React.Component {
             </FixedContainer>
             <FixedContainer position='top-right'>
                 <Title>#recksplorer</Title>
+                <select value={this.state.map} onChange={(e) => this.onMapChange(e)} className={styles.mapselect}>
+                    <option value="vis">Vis.js</option>
+                    <option value="viva">VivaGraphJS</option>
+                </select>
             </FixedContainer>
             <FixedContainer position='bottom-right' border='top-left'>
                 <Credits />
