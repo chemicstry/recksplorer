@@ -48,6 +48,8 @@ export default class VivaGraphMap extends React.Component {
 
     updateData(data)
     {
+        var positions = data.pos;
+
         // Indexes nodes by pubkey
         this.nodeIndex = [];
 
@@ -56,10 +58,20 @@ export default class VivaGraphMap extends React.Component {
             // remove nulls and html chars
             var label = data.nodes[i].alias.replace(/\0/g, '').replace(/<[^>]+>/g, '').substring(0, 16);
 
+            // Precalculated position on server side
+            var pos = {
+                x: positions[i][0],
+                y: positions[i][1]
+            }
+
             this.graph.addNode(data.nodes[i].pub_key, {
                 label: label,
-                color: data.nodes[i].color
+                color: data.nodes[i].color,
+                pos: pos
             });
+
+            if (this.props.physics)
+                this.layout.setNodePosition(data.nodes[i].pub_key, pos.x, pos.y);
 
             this.nodeIndex[data.nodes[i].pub_key] = data.nodes[i];
         }
@@ -90,60 +102,8 @@ export default class VivaGraphMap extends React.Component {
         }
     }
 
-    componentDidMount()
+    startSelectionObserver()
     {
-        this.graph = new Graph.graph();
-
-        // Start observing new network data
-        this.dataObserver = autorun(() => {
-            this.updateData(this.props.store.networkData);
-        });
-
-        // Use SVG graphics engine
-        this.graphics = Graph.View.svgGraphics();
-
-        // Describe node appearance
-        this.graphics.node((node) => {
-            var width = getTextWidth(node.data.label, '7px Roboto');
-            var boxWidth = width+4;
-
-            var rect = Graph.svg('rect', {
-                width: boxWidth,
-                height: 10,
-                rx: 2,
-                ry: 2,
-                x: -boxWidth/2,
-                y: -6,
-                stroke: node.data.color,
-                class: mapstyles.node
-            });
-
-            var text = Graph.svg('text', {
-                class: mapstyles.nodelabel,
-                y: 2
-            });
-
-            // Add text
-            text.innerHTML = node.data.label;
-
-            // Group everything
-            var g = Graph.svg('g');
-            g.append(rect);
-            g.append(text);
-
-            g.addEventListener('click', (e) => {
-                this.props.store.selectObject(node.id);
-
-                // Prevent propagation to base container (unselect event)
-                e.stopPropagation();
-            });
-
-            return g;
-        }).placeNode((nodeUI, pos) => {
-            // Move object group
-            nodeUI.attr('transform', `translate(${pos.x},${pos.y})`);
-        });
-
         // Selection handler
         this.selectObserver = autorun(() => {
             if (this.prevSelection)
@@ -216,7 +176,58 @@ export default class VivaGraphMap extends React.Component {
             else
                 this.graphics.getSvgRoot().classList.remove(mapstyles.hide);
         });
+    }
 
+    componentDidMount()
+    {
+        this.graph = new Graph.graph();
+
+        // Use SVG graphics engine
+        this.graphics = Graph.View.svgGraphics();
+
+        // Describe node appearance
+        this.graphics.node((node) => {
+            var width = getTextWidth(node.data.label, '7px Roboto');
+            var boxWidth = width+4;
+
+            var rect = Graph.svg('rect', {
+                width: boxWidth,
+                height: 10,
+                rx: 2,
+                ry: 2,
+                x: -boxWidth/2,
+                y: -6,
+                stroke: node.data.color,
+                class: mapstyles.node
+            });
+
+            var text = Graph.svg('text', {
+                class: mapstyles.nodelabel,
+                y: 2
+            });
+
+            // Add text
+            text.innerHTML = node.data.label;
+
+            // Group everything
+            var g = Graph.svg('g');
+            g.append(rect);
+            g.append(text);
+
+            g.addEventListener('click', (e) => {
+                this.props.store.selectObject(node.id);
+
+                // Prevent propagation to base container (unselect event)
+                e.stopPropagation();
+            });
+
+            return g;
+        }).placeNode((nodeUI, pos) => {
+            // Move object group
+            nodeUI.attr('transform', `translate(${pos.x},${pos.y})`);
+        });
+
+        // Decribe channel appearance
         this.graphics.link((link) => {
             // Create 2 lines with node colors
             var line1 = Graph.svg("line", {
@@ -253,10 +264,21 @@ export default class VivaGraphMap extends React.Component {
                               .attr("y2", toPos.y);
         });;
 
-        this.layout = Graph.Layout.forceDirected(this.graph, {
-            springLength: 200,
-            springCoeff: 0.00002
-        });
+        if (this.props.physics)
+        {
+            this.layout = Graph.Layout.forceDirected(this.graph, {
+                springLength: 300,
+                springCoeff: 0.00002
+            });
+        }
+        else
+        {
+            this.layout = Graph.Layout.constant(this.graph);
+
+            this.layout.placeNode((node) => {
+                return node.data.pos;
+            });
+        }
 
         // Clicking on background removes selection
         this.mount.addEventListener('click', () => {
@@ -270,12 +292,26 @@ export default class VivaGraphMap extends React.Component {
         });
 
         this.renderer.run();
+
+        // Start observing new network data
+        this.dataObserver = autorun(() => {
+            this.props.store.networkData;
+            this.updateData(this.props.store.networkData);
+
+            if (!this.selectObserver)
+                this.startSelectionObserver();
+        });
     }
 
     componentWillUnmount() {
-        this.dataObserver();
-        this.selectObserver();
-        this.renderer.dispose();
+        if (this.dataObserver)
+            this.dataObserver();
+
+        if (this.selectObserver)
+            this.selectObserver();
+
+        if (this.renderer)
+            this.renderer.dispose();
     }
 
     render() {

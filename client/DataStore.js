@@ -64,7 +64,7 @@ class DataStore {
     }
 
     fetchData() {
-        Axios.get('/networkgraph').then((result) => {
+        Axios.get('/networkgraphv2').then((result) => {
             this.networkData = result.data;
         });
     }

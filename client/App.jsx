@@ -10,6 +10,7 @@ import Credits from './Credits.jsx';
 import Warning from './Warning.jsx';
 import Search from './Search.jsx';
 import Title from './Title.jsx';
+import Cookies from 'js-cookie';
 import { ObjectTypes } from './DataStore.js';
 import { observer } from 'mobx-react';
 import styles from './App.css';
@@ -18,7 +19,15 @@ import 'typeface-roboto';
 @observer
 export default class App extends React.Component {
     state = {
-        map: 'viva'
+        map: 'vivaphys'
+    }
+
+    constructor() {
+        super();
+
+        var map = Cookies.get('map');
+        if (map)
+            this.state.map = map;
     }
 
     componentDidMount() {
@@ -29,6 +38,7 @@ export default class App extends React.Component {
     onMapChange(e)
     {
         this.setState({map: e.target.value});
+        Cookies.set('map', e.target.value);
     }
 
     render() {
@@ -42,7 +52,10 @@ export default class App extends React.Component {
                 map = (<VisGraphMap store={store}/>);
                 break;
             case 'viva':
-                map = (<VivaGraphMap store={store}/>);
+                map = (<VivaGraphMap store={store} key="vivafixed"/>);
+                break;
+            case 'vivaphys':
+                map = (<VivaGraphMap store={store} key="vivaphys" physics={true}/>);
                 break;
         }
 
@@ -68,8 +81,9 @@ export default class App extends React.Component {
             <FixedContainer position='top-right'>
                 <Title>#recksplorer</Title>
                 <select value={this.state.map} onChange={(e) => this.onMapChange(e)} className={styles.mapselect}>
-                    <option value="vis">Vis.js</option>
-                    <option value="viva">VivaGraphJS</option>
+                    <option value="vis">Vis.js (old)</option>
+                    <option value="viva">Viva (fixed)</option>
+                    <option value="vivaphys">Viva (physics)</option>
                 </select>
             </FixedContainer>
             <FixedContainer position='bottom-right' border='top-left'>

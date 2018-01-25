@@ -2,6 +2,7 @@ const cacheControl = require('express-cache-controller');
 const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
+const graphLayout = require('./graphLayout.js');
 
 module.exports = function (app, options) {
     // setup lightning client
@@ -12,14 +13,28 @@ module.exports = function (app, options) {
     const lightning = require("./lightning")(protoPath, lndHost, lndCertPath, macaroonPath);
 
     var graphdata;
+    var graphpos;
+
+    async function CalculateLayout(data)
+    {
+        console.log("Calculating graph layout...");
+
+        var result = await graphLayout(data);
+
+        // Both have to be in sync
+        graphdata = data;
+        graphpos = result;
+
+        console.log("Updated graph data");
+    }
 
     function UpdateNetworkGraph()
     {
-        lightning.DescribeGraph({}, function(err, resp) {
+        lightning.DescribeGraph({}, (err, resp) => {
             if (!err)
             {
-                graphdata = resp;
-                console.log("Updated network graph");
+                console.log("Fetched new network graph");
+                CalculateLayout(resp);
             }
             else
                 console.log(err);
@@ -64,6 +79,19 @@ module.exports = function (app, options) {
             res.send(fs.readFileSync(options.dummyDataPath));
         else
             res.send(graphdata);
+    });
+
+    // CORS endpoint for network graph with precalculated positions
+    app.get('/networkgraphv2', function(req, res) {
+        // Allow CORS
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        // Send data
+        res.send({
+            ...graphdata,
+            pos: graphpos
+        });
     });
 
     // Create payment invoice
