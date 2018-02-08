@@ -3,7 +3,7 @@ module.exports = [
         name: 'port',
         alias: 'p',
         type: Number,
-        defaultValue: 80,
+        defaultValue: 8000,
         description: 'Port number for http server'
     },
     {
@@ -35,6 +35,13 @@ module.exports = [
         name: 'dummyDataPath',
         type: String,
         description: 'Provide a file with dummy data to use instead of LND API'
+    },
+    {
+        name: 'daemon',
+        alias: 'd',
+        type: String,
+        defaultValue: "clightning",
+        description: 'Daemon used: lnd, clightning.'
     },
     {
         name: 'help',

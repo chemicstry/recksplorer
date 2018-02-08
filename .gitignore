@@ -63,3 +63,6 @@ admin.macaroon
 
 # built files
 dist/
+
+.idea
+package-lock.json
