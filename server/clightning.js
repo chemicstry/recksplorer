@@ -63,7 +63,9 @@ module.exports = function (lightningPath) {
         res.channels.forEach((c)=>{
             edges.push({
                 node1_pub : c.source,
-                node2_pub : c.destination
+                node2_pub : c.destination,
+                channel_id : c.short_channel_id,
+                chan_point : c.short_channel_id
             });
         });
 
