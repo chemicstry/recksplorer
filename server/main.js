@@ -8,15 +8,22 @@ module.exports = function (app, options) {
     var lightning = {};
     if (options.daemon === "clightning") {
         // setup clightning client
-        const clightningDir = "/home/trossi/.lightning";
-        const clightning = require("./clightning")(clightningDir);
+        var dir = options.lightningDir;
+        if (dir === ""){
+            dir = path.join(require('os').homedir(), '.lightning');
+        }
+        const clightning = require("./clightning")(dir);
         lightning = clightning;
     } else {
         // setup lightning client
         const lndHost = "localhost:10009";
-        const protoPath = path.join(__dirname, 'lnd.proto');
-        const lndCertPath = path.join(__dirname, 'lnd.cert');
-        const macaroonPath = path.join(__dirname, 'admin.macaroon');
+        var dir = options.lightningDir;
+        if (dir === ""){
+            dir = __dirname;
+        }
+        const protoPath = path.join(dir, 'lnd.proto');
+        const lndCertPath = path.join(dir, 'lnd.cert');
+        const macaroonPath = path.join(dir, 'admin.macaroon');
         const lnd = require("./lightning")(protoPath, lndHost, lndCertPath, macaroonPath);
         lightning = lnd;
     }
@@ -39,6 +46,7 @@ module.exports = function (app, options) {
 
     function UpdateNetworkGraph()
     {
+        console.log("--- UpdateNetworkGraph ---");
         lightning.DescribeGraph({}, (err, resp) => {
             if (!err)
             {

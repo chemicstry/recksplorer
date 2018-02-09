@@ -16,7 +16,7 @@ module.exports = [
     {
         name: 'updateInterval',
         type: Number,
-        defaultValue: 60*1000,
+        defaultValue: 5*60*1000,
         description: 'Interval between LND describegraph fetches (in milliseconds)'
     },
     {
@@ -38,10 +38,15 @@ module.exports = [
     },
     {
         name: 'daemon',
-        alias: 'd',
         type: String,
-        defaultValue: "clightning",
+        defaultValue: "lnd",
         description: 'Daemon used: lnd, clightning.'
+    },
+    {
+        name: 'lightningDir',
+        type: String,
+        defaultValue: "",
+        description: 'Lightning directory, defaults:  \'./\' for lnd, \'~/.lightning\' for clightning'
     },
     {
         name: 'help',
