@@ -18,35 +18,52 @@ module.exports = function (lightningPath) {
     };
 
     lightning.AddInvoice = async function(input, callback){
+        if (!callback){
+            return callback("invalid callback", {});
+        }
+        if (!input){
+            return callback("invalid input", {});
+        }
+
         var msatoshi = input.value;
         var label = Math.random().toString(36).slice(2);
         var description = input.memo;
 
         res = await lightning.invoice(msatoshi,label,description);
+        if (!res){
+            return callback("invoice error", {});
+        }
         var data = {
             payment_request : res.bolt11,
             r_hash : res.payment_hash
         };
-        if (callback) {
-            let resp = { data: data };
-            let err;
-            callback(err, resp);
-        }
+
+        let resp = { data: data };
+        let err;
+        callback(err, resp);
     };
 
     lightning.DescribeGraph = async function(input, callback){
+        if (!callback){
+            return callback("invalid callback", {});
+        }
 
         //console.log("--- listnodes ---");
         res = await lightning.listnodes();
+        if (!res){
+            return callback("listnodes error", {});
+        }
         var nodes = [];
         res.nodes.forEach((n)=>{
             var addresses = [];
-            n.addresses.forEach((a)=>{
-                addresses.push({
-                    network : '',
-                    addr: a.address
+            if (n.addresses) {
+                n.addresses.forEach((a) => {
+                    addresses.push({
+                        network: '',
+                        addr: a.address
+                    });
                 });
-            });
+            }
             nodes.push({
                 id : n.nodeid,
                 pub_key : n.nodeid,
@@ -59,6 +76,9 @@ module.exports = function (lightningPath) {
 
         //console.log("--- listchannels ---");
         res = await lightning.listchannels();
+        if (!res){
+            return callback("listchannels error", {});
+        }
         var edges = [];
         res.channels.forEach((c)=>{
             edges.push({
@@ -70,11 +90,9 @@ module.exports = function (lightningPath) {
         });
 
         //console.log("--- callback ---");
-        if (callback) {
-            let resp = { nodes: nodes , edges: edges };
-            let err;
-            callback(err, resp);
-        }
+        let resp = { nodes: nodes , edges: edges };
+        let err;
+        callback(err, resp);
 
 	};
 
