@@ -16,7 +16,7 @@ module.exports = [
     {
         name: 'updateInterval',
         type: Number,
-        defaultValue: 5*60*1000,
+        defaultValue: 60*1000,
         description: 'Interval between LND describegraph fetches (in milliseconds)'
     },
     {
