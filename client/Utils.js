@@ -30,8 +30,14 @@ function ParseAxiosError(error)
         return error.message;
 }
 
+function GetTransactionURL(txid)
+{
+    return 'https://www.smartbit.com.au/tx/' + txid;
+}
+
 export {
     FormatCapacity,
     RHashArrayToHexString,
-    ParseAxiosError
+    ParseAxiosError,
+    GetTransactionURL
 }

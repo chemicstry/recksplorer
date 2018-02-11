@@ -1,16 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-
-function FormatCapacity(cap)
-{
-    /*if (usdbtc)
-    {
-        var capusd = cap*usdbtc/Math.pow(10,8);
-        return `${cap} sat (${capusd.toFixed(2)} USD)`;
-    }
-    else*/
-        return `${cap} sat`;
-}
+import { FormatCapacity, GetTransactionURL } from './Utils.js'
 
 const styles = {
     indent: {
@@ -34,7 +24,7 @@ export default class ChannelInfo extends React.Component {
                 </tr>
                 <tr>
                     <td>Channel Point</td>
-                    <td><a href="https://www.smartbit.com.au/tx/${ch.chan_point.split(':')[0]}" target="_blank">{ch.chan_point}</a></td>
+                    <td><a href={GetTransactionURL(ch.chan_point.split(':')[0])} target="_blank">{ch.chan_point}</a></td>
                 </tr>
                 <tr>
                     <td>Last Update</td>
