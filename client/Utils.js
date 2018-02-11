@@ -1,13 +1,15 @@
 
 function FormatCapacity(cap, usdbtc)
 {
+    var formattedCap = cap.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     if (usdbtc)
     {
         var capusd = cap*usdbtc/Math.pow(10,8);
-        return `${cap} sat (${capusd.toFixed(2)} USD)`;
+        var formattedCapusd = capusd.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+        return `${formattedCap} sat (${formattedCapusd} USD)`;
     }
     else
-        return `${cap} sat`;
+        return `${formattedCap} sat`;
 }
 
 // Converts uint8 json array to hex string
