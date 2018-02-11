@@ -20,7 +20,7 @@ export default class ChannelInfo extends React.Component {
                 </tr>
                 <tr>
                     <td>Capacity</td>
-                    <td>{FormatCapacity(ch.capacity)}</td>
+                    <td>{FormatCapacity(parseInt(ch.capacity), this.props.store.usdbtc)}</td>
                 </tr>
                 <tr>
                     <td>Channel Point</td>

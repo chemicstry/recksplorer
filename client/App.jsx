@@ -69,7 +69,7 @@ export default class App extends React.Component {
                         {selectedObject.type == ObjectTypes.NODE ? (
                             <NodeInfo data={selectedObject} />
                         ) : (
-                            <ChannelInfo data={selectedObject} />
+                            <ChannelInfo data={selectedObject} store={store} />
                         )}
                     </ObjectInfo>
                 ) : ''}
