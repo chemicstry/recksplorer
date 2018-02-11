@@ -1,11 +1,11 @@
 
 function FormatCapacity(cap, usdbtc)
 {
-    var formattedCap = cap.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    var formattedCap = cap.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     if (usdbtc)
     {
         var capusd = cap*usdbtc/Math.pow(10,8);
-        var formattedCapusd = capusd.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+        var formattedCapusd = capusd.toLocaleString(undefined, {style: 'currency', currency: 'USD'});
         return `${formattedCap} sat (${formattedCapusd} USD)`;
     }
     else
