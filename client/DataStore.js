@@ -14,33 +14,33 @@ class DataStore {
     };
 
     // Currently selected object on map (node or channel)
-    @observable selectedObject;
+    @observable selectedObject = {};
 
     // Bitcoin price in usd
     @observable usdbtc;
 
-    selectObject(object) {
-        this.selectedObject = object;
+    selectObject(object, source) {
+        this.selectedObject = {object, source};
     }
 
     // Finds selected object by pubkey or channel id and returns data
     @computed get selectedObjectData()
     {
-        if (!this.selectedObject)
+        if (!this.selectedObject.object)
             return undefined;
 
         // Node pubkey is 66 chars
-        if (this.selectedObject.length == 66)
+        if (this.selectedObject.object.length == 66)
         {
             return {
-                ...this.networkData.nodes.find((node) => node.pub_key == this.selectedObject),
+                ...this.networkData.nodes.find((node) => node.pub_key == this.selectedObject.object),
                 type: ObjectTypes.NODE
             };
         }
         else
         {
             return {
-                ...this.networkData.edges.find((edge) => edge.channel_id == this.selectedObject),
+                ...this.networkData.edges.find((edge) => edge.channel_id == this.selectedObject.object),
                 type: ObjectTypes.CHANNEL
             };
         }

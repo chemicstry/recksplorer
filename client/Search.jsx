@@ -97,7 +97,7 @@ export default class Search extends React.Component {
 
     onClickItem(item)
     {
-        this.props.store.selectObject(item);
+        this.props.store.selectObject(item, 'search');
     }
 
     render() {

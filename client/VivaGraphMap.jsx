@@ -107,6 +107,7 @@ export default class VivaGraphMap extends React.Component {
     {
         // Selection handler
         this.selectObserver = autorun(() => {
+            // Remove previous selection
             if (this.prevSelection)
             {
                 if (this.prevSelection.type == ObjectTypes.NODE)
@@ -137,6 +138,7 @@ export default class VivaGraphMap extends React.Component {
                 }
             }
 
+            // Fetch new selection from store
             var object = this.props.store.selectedObjectData;
 
             if (object)
@@ -154,6 +156,13 @@ export default class VivaGraphMap extends React.Component {
                             this.graphics.getLinkUI(link).children[1].classList.add(mapstyles.selected);
                         });
                     }
+
+                    // Center graph if selection was not triggered by map
+                    if (this.props.store.selectedObject.source != 'map')
+                    {
+                        var pos = this.layout.getNodePosition(object.pub_key);
+                        this.renderer.moveTo(pos.x, pos.y);
+                    }
                 }
                 else // channel
                 {
@@ -166,6 +175,13 @@ export default class VivaGraphMap extends React.Component {
                     // Add node highlight
                     this.graphics.getNodeUI(object.node1_pub).children[0].classList.add(mapstyles.selected);
                     this.graphics.getNodeUI(object.node2_pub).children[0].classList.add(mapstyles.selected);
+
+                    // Center graph if selection was not triggered by map
+                    if (this.props.store.selectedObject.source != 'map')
+                    {
+                        var pos = this.layout.getLinkPosition(linkid);
+                        this.renderer.moveTo((pos.from.x+pos.to.x)/2, (pos.from.y+pos.to.y)/2);
+                    }
                 }
             }
 
@@ -216,7 +232,7 @@ export default class VivaGraphMap extends React.Component {
             g.append(text);
 
             g.addEventListener('click', (e) => {
-                this.props.store.selectObject(node.id);
+                this.props.store.selectObject(node.id, 'map');
 
                 // Prevent propagation to base container (unselect event)
                 e.stopPropagation();
@@ -245,7 +261,7 @@ export default class VivaGraphMap extends React.Component {
             g.append(line1);
             g.append(line2);
             g.addEventListener('click', (e) => {
-                this.props.store.selectObject(link.data.channel_id);
+                this.props.store.selectObject(link.data.channel_id, 'map');
                 e.stopPropagation();
             });
             return g;
@@ -283,7 +299,7 @@ export default class VivaGraphMap extends React.Component {
 
         // Clicking on background removes selection
         this.mount.addEventListener('click', () => {
-            this.props.store.selectObject(undefined);
+            this.props.store.selectObject(undefined, 'map');
         });
 
         this.renderer = Graph.View.renderer(this.graph, {
