@@ -50,22 +50,33 @@ module.exports = function (app, options) {
 
     function UpdateNetworkGraph()
     {
-        console.log("Fetching graph data from lightning daemon...");
-        lightning.DescribeGraph({}, (err, resp) => {
-            if (!err)
-            {
-                console.log(`Successfully fetched ${resp.nodes.length} nodes and ${resp.edges.length} edges`);
-                CalculateLayout(resp);
-            }
-            else
-                console.log(err);
-        });
-    }
-
-    if (!options.dummyDataPath)
-    {
-        UpdateNetworkGraph();
-        setInterval(UpdateNetworkGraph, options.updateInterval);
+        if (options.dummyDataPath)
+        {
+            console.log(`Fetching graph data from local file '${options.dummyDataPath}'`);
+            fs.readFile(options.dummyDataPath, (err, data) => {
+                if (!err)
+                {
+                    data = JSON.parse(data);
+                    console.log(`Successfully fetched ${data.nodes.length} nodes and ${data.edges.length} edges`);
+                    CalculateLayout(data);
+                }
+                else
+                    console.log(err);
+            });
+        }
+        else
+        {
+            console.log("Fetching graph data from lightning daemon...");
+            lightning.DescribeGraph({}, (err, resp) => {
+                if (!err)
+                {
+                    console.log(`Successfully fetched ${resp.nodes.length} nodes and ${resp.edges.length} edges`);
+                    CalculateLayout(resp);
+                }
+                else
+                    console.log(err);
+            });
+        }
     }
 
     // Saves network graph to file
@@ -96,10 +107,7 @@ module.exports = function (app, options) {
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
         // Send data
-        if (options.dummyDataPath)
-            res.send(fs.readFileSync(options.dummyDataPath));
-        else
-            res.send(graphdata);
+        res.send(graphdata);
     });
 
     // CORS endpoint for network graph with precalculated positions
@@ -171,4 +179,8 @@ module.exports = function (app, options) {
                 res.status(500).send('Error checking invoice status');
         });
     });
+
+    // Update network graph and start update timer
+    UpdateNetworkGraph();
+    setInterval(UpdateNetworkGraph, options.updateInterval);
 };
