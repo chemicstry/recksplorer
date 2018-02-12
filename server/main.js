@@ -12,7 +12,7 @@ module.exports = function (app, options) {
         if (dir === ""){
             dir = path.join(require('os').homedir(), '.lightning');
         }
-        const clightning = require("./clightning")(dir);
+        const clightning = require("./lightning/clightning")(dir);
         lightning = clightning;
     } else {
         // setup lightning client
@@ -24,7 +24,7 @@ module.exports = function (app, options) {
         const protoPath = path.join(dir, 'lnd.proto');
         const lndCertPath = path.join(dir, 'lnd.cert');
         const macaroonPath = path.join(dir, 'admin.macaroon');
-        const lnd = require("./lightning")(protoPath, lndHost, lndCertPath, macaroonPath);
+        const lnd = require("./lightning/lnd")(protoPath, lndHost, lndCertPath, macaroonPath);
         lightning = lnd;
     }
 
@@ -50,12 +50,11 @@ module.exports = function (app, options) {
 
     function UpdateNetworkGraph()
     {
-        console.log("--- UpdateNetworkGraph ---");
+        console.log("Fetching graph data from lightning daemon...");
         lightning.DescribeGraph({}, (err, resp) => {
             if (!err)
             {
-                console.log("Fetched new network graph");
-                //console.log(resp);
+                console.log(`Successfully fetched ${resp.nodes.length} nodes and ${resp.edges.length} edges`);
                 CalculateLayout(resp);
             }
             else

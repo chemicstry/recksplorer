@@ -3,7 +3,7 @@ module.exports = [
         name: 'port',
         alias: 'p',
         type: Number,
-        defaultValue: 8000,
+        defaultValue: 80,
         description: 'Port number for http server'
     },
     {
@@ -39,13 +39,13 @@ module.exports = [
     {
         name: 'daemon',
         type: String,
-        defaultValue: "lnd",
+        defaultValue: 'lnd',
         description: 'Daemon used: lnd, clightning.'
     },
     {
         name: 'lightningDir',
         type: String,
-        defaultValue: "",
+        defaultValue: '',
         description: 'Lightning directory, defaults:  \'./\' for lnd, \'~/.lightning\' for clightning'
     },
     {
