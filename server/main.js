@@ -28,8 +28,12 @@ module.exports = function (app, options) {
         lightning = lnd;
     }
 
-    var graphdata;
-    var graphpos;
+    var graphdata = {
+        nodes: [],
+        edges: []
+    };
+
+    var graphpos = [];
 
     async function CalculateLayout(data)
     {
