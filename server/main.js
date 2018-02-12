@@ -5,12 +5,28 @@ const fs = require('fs');
 const graphLayout = require('./graphLayout.js');
 
 module.exports = function (app, options) {
-    // setup lightning client
-    const lndHost = "localhost:10009";
-    const protoPath = path.join(__dirname, 'lnd.proto');
-    const lndCertPath = path.join(__dirname, 'lnd.cert');
-    const macaroonPath = path.join(__dirname, 'admin.macaroon');
-    const lightning = require("./lightning")(protoPath, lndHost, lndCertPath, macaroonPath);
+    var lightning = {};
+    if (options.daemon === "clightning") {
+        // setup clightning client
+        var dir = options.lightningDir;
+        if (dir === ""){
+            dir = path.join(require('os').homedir(), '.lightning');
+        }
+        const clightning = require("./clightning")(dir);
+        lightning = clightning;
+    } else {
+        // setup lightning client
+        const lndHost = "localhost:10009";
+        var dir = options.lightningDir;
+        if (dir === ""){
+            dir = __dirname;
+        }
+        const protoPath = path.join(dir, 'lnd.proto');
+        const lndCertPath = path.join(dir, 'lnd.cert');
+        const macaroonPath = path.join(dir, 'admin.macaroon');
+        const lnd = require("./lightning")(protoPath, lndHost, lndCertPath, macaroonPath);
+        lightning = lnd;
+    }
 
     var graphdata;
     var graphpos;
@@ -30,10 +46,12 @@ module.exports = function (app, options) {
 
     function UpdateNetworkGraph()
     {
+        console.log("--- UpdateNetworkGraph ---");
         lightning.DescribeGraph({}, (err, resp) => {
             if (!err)
             {
                 console.log("Fetched new network graph");
+                //console.log(resp);
                 CalculateLayout(resp);
             }
             else

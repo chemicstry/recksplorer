@@ -3,7 +3,7 @@ module.exports = [
         name: 'port',
         alias: 'p',
         type: Number,
-        defaultValue: 80,
+        defaultValue: 8000,
         description: 'Port number for http server'
     },
     {
@@ -35,6 +35,18 @@ module.exports = [
         name: 'dummyDataPath',
         type: String,
         description: 'Provide a file with dummy data to use instead of LND API'
+    },
+    {
+        name: 'daemon',
+        type: String,
+        defaultValue: "lnd",
+        description: 'Daemon used: lnd, clightning.'
+    },
+    {
+        name: 'lightningDir',
+        type: String,
+        defaultValue: "",
+        description: 'Lightning directory, defaults:  \'./\' for lnd, \'~/.lightning\' for clightning'
     },
     {
         name: 'help',

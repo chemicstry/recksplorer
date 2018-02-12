@@ -63,3 +63,5 @@ admin.macaroon
 
 # built files
 dist/
+
+.idea
