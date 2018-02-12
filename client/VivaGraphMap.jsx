@@ -4,6 +4,7 @@ import { ObjectTypes } from './DataStore.js';
 import { computed, autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import mapstyles from './VivaGraphMap.css';
+import escape from 'escape-html';
 
 import FontAwesome from 'react-fontawesome';
 import FA from 'font-awesome/css/font-awesome.css';
@@ -56,7 +57,7 @@ export default class VivaGraphMap extends React.Component {
         for (var i = 0; i < data.nodes.length; i++)
         {
             // remove nulls and html chars
-            var label = data.nodes[i].alias.replace(/\0/g, '').replace(/<[^>]+>/g, '').substring(0, 16);
+            var label = data.nodes[i].alias.replace(/\0/g, '').substring(0, 16);
 
             // Precalculated position on server side
             var pos = {
@@ -207,7 +208,7 @@ export default class VivaGraphMap extends React.Component {
             });
 
             // Add text
-            text.innerHTML = node.data.label;
+            text.innerHTML = escape(node.data.label);
 
             // Group everything
             var g = Graph.svg('g');

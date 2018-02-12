@@ -17,7 +17,7 @@ export default class NodeInfo extends React.Component {
                 </tr>
                 <tr>
                     <td>Alias</td>
-                    <td>{node.alias.replace(/\0/g, '').substring(0, 18)}</td>
+                    <td>{node.alias.replace(/\0/g, '')}</td>
                 </tr>
                 <tr>
                     <td>URI</td>
