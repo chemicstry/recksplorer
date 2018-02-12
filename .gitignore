@@ -65,4 +65,3 @@ admin.macaroon
 dist/
 
 .idea
-package-lock.json
