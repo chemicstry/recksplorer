@@ -297,9 +297,17 @@ export default class VivaGraphMap extends React.Component {
             });
         }
 
-        // Clicking on background removes selection
-        this.mount.addEventListener('click', () => {
-            this.props.store.selectObject(undefined, 'map');
+        // Clicking on background removes selection (except when draging)
+        var dragFlag;
+        this.mount.addEventListener('mousedown', () => {
+            dragFlag = false;
+        });
+        this.mount.addEventListener('mousemove', () => {
+            dragFlag = true;
+        });
+        this.mount.addEventListener('mouseup', () => {
+            if (!dragFlag)
+                this.props.store.selectObject(undefined, 'map');
         });
 
         this.renderer = Graph.View.renderer(this.graph, {
