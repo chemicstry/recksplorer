@@ -81,12 +81,15 @@ module.exports = function (lightningPath) {
         }
         var edges = [];
         res.channels.forEach((c)=>{
-            edges.push({
-                node1_pub : c.source,
-                node2_pub : c.destination,
-                channel_id : c.short_channel_id,
-                chan_point : c.short_channel_id
-            });
+            if (c.active && c.public) {
+                edges.push({
+                    node1_pub: c.source,
+                    node2_pub: c.destination,
+                    channel_id: c.short_channel_id,
+                    chan_point: c.short_channel_id,
+                    last_update: c.last_update
+                });
+            }
         });
 
         //console.log("--- callback ---");
