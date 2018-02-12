@@ -296,7 +296,15 @@ export default class VivaGraphMap extends React.Component {
         // Start observing new network data
         this.dataObserver = autorun(() => {
             this.props.store.networkData;
+
+            // Pause rendering (to prevent re-render on each new node/link)
+            this.renderer.pause();
+
+            // Update data
             this.updateData(this.props.store.networkData);
+
+            // Resume rendering
+            this.renderer.resume();
 
             if (!this.selectObserver)
                 this.startSelectionObserver();

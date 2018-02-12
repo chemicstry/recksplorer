@@ -19,7 +19,7 @@ import 'typeface-roboto';
 @observer
 export default class App extends React.Component {
     state = {
-        map: 'vivaphys'
+        map: 'viva'
     }
 
     constructor() {
