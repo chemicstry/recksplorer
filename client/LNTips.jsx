@@ -2,6 +2,7 @@ import React from 'react';
 import AppStyles from './App.css';
 import Axios from 'axios';
 import { RHashArrayToHexString, ParseAxiosError } from './Utils.js';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const PaymentState = {
     PAYMENT_STATE_WAITING_FOR_INPUT: 'PAYMENT_STATE_WAITING_FOR_INPUT',
@@ -37,7 +38,8 @@ export default class LNTips extends React.Component {
         value: 0,
         invoice: '',
         rhash: '',
-        error: ''
+        error: '',
+        copied: false
     }
 
     onCreateInvoice(event)
@@ -110,7 +112,13 @@ export default class LNTips extends React.Component {
                     <span style={styles.container}>
                         PayReq: 
                         <input type="text" value={this.state.invoice} readOnly={true} style={styles.input} />
-                        <button style={styles.button}>Copy</button>
+                        <CopyToClipboard text={this.state.invoice} onCopy={() => this.setState({copied: true})}>
+                            { this.state.copied ? (
+                                <button style={styles.button} onMouseEnter={() => this.setState({copied: false})}>Copied!</button>
+                            ) : (
+                                <button style={styles.button}>Copy</button>
+                            ) }
+                        </CopyToClipboard>
                     </span>
                 );
             case PaymentState.PAYMENT_STATE_COMPLETED:
