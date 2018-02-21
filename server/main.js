@@ -22,7 +22,7 @@ module.exports = function (app, options) {
             dir = __dirname;
         }
         const protoPath = path.join(dir, 'lnd.proto');
-        const lndCertPath = path.join(dir, 'lnd.cert');
+        const lndCertPath = path.join(dir, 'tls.cert');
         const macaroonPath = path.join(dir, 'admin.macaroon');
         const lnd = require("./lightning/lnd")(protoPath, lndHost, lndCertPath, macaroonPath);
         lightning = lnd;

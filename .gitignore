@@ -59,6 +59,7 @@ typings/
 
 # lnd files
 lnd.cert
+tls.cert
 admin.macaroon
 
 # built files

@@ -25,7 +25,7 @@ You need to have `lnd.cert` and `admin.macaroon` files in project directory in o
 ### Start the server
 
 ```
-node index.js
+node server.js
 ```
 
 ## Credits
