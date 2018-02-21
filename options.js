@@ -1,3 +1,6 @@
+const path = require('path');
+const os = require('os');
+
 module.exports = [
     {
         name: 'port',
@@ -43,10 +46,22 @@ module.exports = [
         description: 'Daemon used: lnd, clightning.'
     },
     {
-        name: 'lightningDir',
+        name: 'lndDir',
         type: String,
-        defaultValue: '',
-        description: 'Lightning directory, defaults:  \'./\' for lnd, \'~/.lightning\' for clightning'
+        defaultValue: path.join(os.homedir(), '.lnd'),
+        description: 'LND daemon config directory. Must contain admin.macaroon and tls.cert'
+    },
+    {
+        name: 'lndHost',
+        type: String,
+        defaultValue: 'localhost:10009',
+        description: 'LND daemon hostname'
+    },
+    {
+        name: 'clightningDir',
+        type: String,
+        defaultValue: path.join(os.homedir(), '.lightning'),
+        description: 'clightning daemon config directory'
     },
     {
         name: 'help',

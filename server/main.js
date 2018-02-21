@@ -8,23 +8,13 @@ module.exports = function (app, options) {
     var lightning = {};
     if (options.daemon === "clightning") {
         // setup clightning client
-        var dir = options.lightningDir;
-        if (dir === ""){
-            dir = path.join(require('os').homedir(), '.lightning');
-        }
-        const clightning = require("./lightning/clightning")(dir);
+        const clightning = require("./lightning/clightning")(options.clightningDir);
         lightning = clightning;
     } else {
-        // setup lightning client
-        const lndHost = "localhost:10009";
-        var dir = options.lightningDir;
-        if (dir === ""){
-            dir = __dirname;
-        }
-        const protoPath = path.join(dir, 'lnd.proto');
-        const lndCertPath = path.join(dir, 'tls.cert');
-        const macaroonPath = path.join(dir, 'admin.macaroon');
-        const lnd = require("./lightning/lnd")(protoPath, lndHost, lndCertPath, macaroonPath);
+        const protoPath = path.join(__dirname, 'lnd.proto');
+        const lndCertPath = path.join(options.lndDir, 'tls.cert');
+        const macaroonPath = path.join(options.lndDir, 'admin.macaroon');
+        const lnd = require("./lightning/lnd")(protoPath, options.lndHost, lndCertPath, macaroonPath);
         lightning = lnd;
     }
 
