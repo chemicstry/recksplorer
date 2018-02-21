@@ -8,8 +8,31 @@ module.exports = function (lightningPath) {
     lightning = new LightningClient(lightningPath, false);
 
     lightning.LookupInvoice = async function(input, callback){
-        let resp = { };
-        let err = 'Not implemented';
+
+        //console.log("--- listinvoices ---");
+        res = await lightning.listinvoices();
+        if (!res){
+            return callback("listinvoices error", {});
+        }
+        var invoice;
+        res.invoices.forEach((i)=>{
+            if (i.payment_hash === input.r_hash_str){
+                invoice = {
+                    memo : i.label,
+                    r_hash : i.payment_hash,
+                    value : i.msatoshi,
+                    settled : (i.status === 'paid') ? true : false,
+                    settle_date : (i.status === 'paid' && i.paid_at) ? i.paid_at : 0,
+                    expiry : i.expiry_at
+                }
+            }
+        });
+        if (!invoice){
+            return callback("Invoice not found", {});
+        }
+
+        let resp = invoice;
+        let err ;
         callback(err, resp);
     };
 
@@ -29,12 +52,11 @@ module.exports = function (lightningPath) {
         if (!res){
             return callback("invoice error", {});
         }
-        var data = {
+
+        let resp = {
             payment_request : res.bolt11,
             r_hash : res.payment_hash
         };
-
-        let resp = { data: data };
         let err;
         callback(err, resp);
     };

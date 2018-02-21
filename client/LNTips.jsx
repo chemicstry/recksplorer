@@ -51,10 +51,14 @@ export default class LNTips extends React.Component {
                 value: value
             }
         }).then(result => {
+            var hexString = result.data.r_hash;
+            if (typeof(hexString)!=="string"){
+                hexString = RHashArrayToHexString(result.data.r_hash.data);
+            }
             this.setState({
                 paymentState: PaymentState.PAYMENT_STATE_WAITING_FOR_PAYMENT,
                 invoice: result.data.payment_request,
-                rhash: RHashArrayToHexString(result.data.r_hash.data)
+                rhash: hexString
             });
 
             // Poll for completed payment
