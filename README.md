@@ -21,6 +21,7 @@ npm install
 ### Requirements
 
 If connecting to a remote LND, you need to set `lndHost` and `lndDir` params. `lndDir` must have `admin.macaroon` and `tls.cert` files.
+
 For `c-lightning` set `--daemon clightning` and specify `clightningDir` if not using default location. Note that c-lightning supplies less data about channels than LND.
 
 For full configuration options use `node server.js --help` or see `options.js` file.
@@ -40,4 +41,4 @@ NODE_ENV=production node server.js
 
 ## Credits
 
-Thanks to https://github.com/mably/lncli-web for `lightning.js` grpc wrapper. (Contact me if I messed up with licensing)
+Thanks to https://github.com/mably/lncli-web for `lightning.js` grpc wrapper.
