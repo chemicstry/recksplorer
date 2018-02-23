@@ -66,6 +66,13 @@ module.exports = function (lightningPath) {
             return callback("invalid callback", {});
         }
 
+        //console.log("--- getinfo ---");
+        res = await lightning.getinfo();
+        if (!res){
+            return callback("listnodes error", {});
+        }
+        let network = res.network;
+
         //console.log("--- listnodes ---");
         res = await lightning.listnodes();
         if (!res){
@@ -76,17 +83,24 @@ module.exports = function (lightningPath) {
             var addresses = [];
             if (n.addresses) {
                 n.addresses.forEach((a) => {
+                    var address = "";
+                    if(a.address){
+                        address = a.address;
+                    }
+                    if(a.port){
+                        address += ":"+a.port;
+                    }
                     addresses.push({
-                        network: '',
-                        addr: a.address
+                        network: network,
+                        addr: address
                     });
                 });
             }
             nodes.push({
                 id : n.nodeid,
                 pub_key : n.nodeid,
-                color : "#"+n.color,
-                alias : n.alias,
+                color : (n.color)?'#'+n.color:'#FFFFFF',
+                alias : (n.alias)?n.alias:'',
                 last_update : Date.now(),
                 addresses : addresses
             });
