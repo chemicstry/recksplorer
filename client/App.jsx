@@ -7,7 +7,6 @@ import NodeInfo from './NodeInfo.jsx';
 import ChannelInfo from './ChannelInfo.jsx';
 import NetworkInfo from './NetworkInfo.jsx';
 import Credits from './Credits.jsx';
-import Warning from './Warning.jsx';
 import Search from './Search.jsx';
 import Title from './Title.jsx';
 import Cookies from 'js-cookie';
@@ -89,7 +88,6 @@ export default class App extends React.Component {
             <FixedContainer position='bottom-right' border='top-left'>
                 <Credits />
             </FixedContainer>
-            <Warning />
         </div>
         );
     }
