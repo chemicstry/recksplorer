@@ -4,6 +4,8 @@ const fs = require("fs");
 
 // expose the routes to our app with module.exports
 module.exports = function (protoPath, lndHost, lndCertPath, macaroonPath) {
+    // GRPC does not support ECDSA certificates by default
+    process.env.GRPC_SSL_CIPHER_SUITES = "ECDHE-ECDSA-AES128-SHA256";
 
     const lnrpcDescriptor = grpc.load(protoPath);
     const lndCert = fs.readFileSync(lndCertPath);
