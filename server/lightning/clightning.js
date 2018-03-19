@@ -8,8 +8,31 @@ module.exports = function (lightningPath) {
     lightning = new LightningClient(lightningPath, false);
 
     lightning.LookupInvoice = async function(input, callback){
-        let resp = { };
-        let err = 'Not implemented';
+
+        //console.log("--- listinvoices ---");
+        res = await lightning.listinvoices();
+        if (!res){
+            return callback("listinvoices error", {});
+        }
+        var invoice;
+        res.invoices.forEach((i)=>{
+            if (i.payment_hash === input.r_hash_str){
+                invoice = {
+                    memo : i.label,
+                    r_hash : i.payment_hash,
+                    value : i.msatoshi,
+                    settled : (i.status === 'paid') ? true : false,
+                    settle_date : (i.status === 'paid' && i.paid_at) ? i.paid_at : 0,
+                    expiry : i.expiry_at
+                }
+            }
+        });
+        if (!invoice){
+            return callback("Invoice not found", {});
+        }
+
+        let resp = invoice;
+        let err ;
         callback(err, resp);
     };
 
@@ -29,12 +52,11 @@ module.exports = function (lightningPath) {
         if (!res){
             return callback("invoice error", {});
         }
-        var data = {
+
+        let resp = {
             payment_request : res.bolt11,
             r_hash : res.payment_hash
         };
-
-        let resp = { data: data };
         let err;
         callback(err, resp);
     };
@@ -43,6 +65,13 @@ module.exports = function (lightningPath) {
         if (!callback){
             return callback("invalid callback", {});
         }
+
+        //console.log("--- getinfo ---");
+        res = await lightning.getinfo();
+        if (!res){
+            return callback("listnodes error", {});
+        }
+        let network = res.network;
 
         //console.log("--- listnodes ---");
         res = await lightning.listnodes();
@@ -54,17 +83,24 @@ module.exports = function (lightningPath) {
             var addresses = [];
             if (n.addresses) {
                 n.addresses.forEach((a) => {
+                    var address = "";
+                    if(a.address){
+                        address = a.address;
+                    }
+                    if(a.port){
+                        address += ":"+a.port;
+                    }
                     addresses.push({
-                        network: '',
-                        addr: a.address
+                        network: network,
+                        addr: address
                     });
                 });
             }
             nodes.push({
                 id : n.nodeid,
                 pub_key : n.nodeid,
-                color : "#"+n.color,
-                alias : n.alias,
+                color : (n.color)?'#'+n.color:'#FFFFFF',
+                alias : (n.alias)?n.alias:'',
                 last_update : Date.now(),
                 addresses : addresses
             });
