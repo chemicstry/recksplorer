@@ -6,7 +6,7 @@ module.exports = [
         name: 'port',
         alias: 'p',
         type: Number,
-        defaultValue: 80,
+        defaultValue: 3000,
         description: 'Port number for http server'
     },
     {

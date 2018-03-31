@@ -1,10 +1,10 @@
 
-function FormatCapacity(cap, usdbtc)
+function FormatCapacity(cap, usdltc)
 {
     var formattedCap = cap.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    if (usdbtc)
+    if (usdltc)
     {
-        var capusd = cap*usdbtc/Math.pow(10,8);
+        var capusd = cap*usdltc/Math.pow(10,8);
         var formattedCapusd = capusd.toLocaleString(undefined, {style: 'currency', currency: 'USD'});
         return `${formattedCap} sat (${formattedCapusd} USD)`;
     }

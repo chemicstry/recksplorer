@@ -17,7 +17,7 @@ class DataStore {
     @observable selectedObject = {};
 
     // Bitcoin price in usd
-    @observable usdbtc;
+    @observable usdltc;
 
     selectObject(object, source) {
         this.selectedObject = {object, source};
@@ -70,8 +70,8 @@ class DataStore {
     }
 
     fetchPrice() {
-        Axios.get('https://blockchain.info/ticker').then((result) => {
-            this.usdbtc = result.data.USD.last;
+        Axios.get('https://api.coinmarketcap.com/v1/ticker/litecoin/').then((result) => {
+            this.usdltc = result.data[0].price_usd;
         });
     }
 }
