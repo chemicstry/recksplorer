@@ -17,16 +17,12 @@ export default class Credits extends React.Component {
             <table className={AppStyles.datatable}>
                 <tbody>
                     <tr>
-                        <td>BTC</td>
-                        <td>39AqCMaBw4nzNxQrPsqYeaNrCC2msrFu6Y</td>
+                        <td>Author:</td>
+                        <td><a href="https://github.com/chemicstry/recksplorer" target="_blank">chemicstry</a></td>
                     </tr>
                     <tr>
-                        <td>LN</td>
-                        <td><LNTips /></td>
-                    </tr>
-                    <tr>
-                        <td>Source</td>
-                        <td><a href="https://github.com/chemicstry/recksplorer" target="_blank">https://github.com/chemicstry/recksplorer</a></td>
+                        <td>LTC customization:</td>
+                        <td><a href="https://github.com/Jasonhcwong/recksplorer" target="_blank">JasonWong</a></td>
                     </tr>
                 </tbody>
             </table>
