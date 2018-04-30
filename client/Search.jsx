@@ -6,7 +6,6 @@ var styles = {
     container:{
         padding: '5px',
         fontSize: '11px',
-        backgroundColor: '#FFFFFF',
         borderTop: '1px solid #891AFF'
     },
     input: {

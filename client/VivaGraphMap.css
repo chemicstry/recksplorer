@@ -1,7 +1,32 @@
+.container 
+{
+    width: 100vw;
+    height: 100vh;
+}
+
+:global(.dark) .container
+{
+    background-color: #000;
+}
+
+.overlay {
+    position: 'absolute';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .node {
     stroke-width: 1;
     fill: #FFF;
+}
+
+:global(.dark) .node {
+    fill: #000;
 }
 
 .node.selected
@@ -17,6 +42,10 @@
     font-size: 7px;
 }
 
+:global(.dark) .nodelabel {
+    fill: #CCC;
+}
+
 .link {
     stroke-width: 0.5;
 }
@@ -29,6 +58,14 @@
     stroke: #ccc;
 }
 
+:global(.dark) .hide .node:not(.selected) {
+    stroke: #333;
+}
+
 .hide .link:not(.selected) {
     stroke: #ccc;
+}
+
+:global(.dark) .hide .link:not(.selected) {
+    stroke: #333;
 }

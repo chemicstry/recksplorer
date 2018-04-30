@@ -3,28 +3,11 @@ import { Graph } from 'vivagraphjs';
 import { ObjectTypes } from './DataStore.js';
 import { computed, autorun } from 'mobx';
 import { observer } from 'mobx-react';
-import mapstyles from './VivaGraphMap.css';
+import styles from './VivaGraphMap.css';
 import escape from 'escape-html';
 
 import FontAwesome from 'react-fontawesome';
 import FA from 'font-awesome/css/font-awesome.css';
-
-var styles = {
-    container: {
-        width: '100vw',
-        height: '100vh'
-    },
-    overlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-}
 
 function getTextWidth(text, font) {
     // re-use canvas object for better performance
@@ -113,14 +96,14 @@ export default class VivaGraphMap extends React.Component {
                 if (this.prevSelection.type == ObjectTypes.NODE)
                 {
                     // Remove node highlight
-                    this.graphics.getNodeUI(this.prevSelection.pub_key).children[0].classList.remove(mapstyles.selected);
+                    this.graphics.getNodeUI(this.prevSelection.pub_key).children[0].classList.remove(styles.selected);
 
                     // Remove link highligth
                     if (this.channelsByNode[this.prevSelection.pub_key])
                     {
                         this.channelsByNode[this.prevSelection.pub_key].forEach((link) => {
-                            this.graphics.getLinkUI(link).children[0].classList.remove(mapstyles.selected);
-                            this.graphics.getLinkUI(link).children[1].classList.remove(mapstyles.selected);
+                            this.graphics.getLinkUI(link).children[0].classList.remove(styles.selected);
+                            this.graphics.getLinkUI(link).children[1].classList.remove(styles.selected);
                         });
                     }
                 }
@@ -129,12 +112,12 @@ export default class VivaGraphMap extends React.Component {
                     var linkid = getVivaLinkID(this.prevSelection.node1_pub, this.prevSelection.node2_pub);
 
                     // Remove link highlight
-                    this.graphics.getLinkUI(linkid).children[0].classList.remove(mapstyles.selected);
-                    this.graphics.getLinkUI(linkid).children[1].classList.remove(mapstyles.selected);
+                    this.graphics.getLinkUI(linkid).children[0].classList.remove(styles.selected);
+                    this.graphics.getLinkUI(linkid).children[1].classList.remove(styles.selected);
 
                     // Remove node highlight
-                    this.graphics.getNodeUI(this.prevSelection.node1_pub).children[0].classList.remove(mapstyles.selected);
-                    this.graphics.getNodeUI(this.prevSelection.node2_pub).children[0].classList.remove(mapstyles.selected);
+                    this.graphics.getNodeUI(this.prevSelection.node1_pub).children[0].classList.remove(styles.selected);
+                    this.graphics.getNodeUI(this.prevSelection.node2_pub).children[0].classList.remove(styles.selected);
                 }
             }
 
@@ -146,14 +129,14 @@ export default class VivaGraphMap extends React.Component {
                 if (object.type == ObjectTypes.NODE)
                 {
                     // Add node highlight
-                    this.graphics.getNodeUI(object.pub_key).children[0].classList.add(mapstyles.selected);
+                    this.graphics.getNodeUI(object.pub_key).children[0].classList.add(styles.selected);
 
                     if (this.channelsByNode[object.pub_key])
                     {
                         this.channelsByNode[object.pub_key].forEach((link) => {
                             // Add link highlight
-                            this.graphics.getLinkUI(link).children[0].classList.add(mapstyles.selected);
-                            this.graphics.getLinkUI(link).children[1].classList.add(mapstyles.selected);
+                            this.graphics.getLinkUI(link).children[0].classList.add(styles.selected);
+                            this.graphics.getLinkUI(link).children[1].classList.add(styles.selected);
                         });
                     }
 
@@ -169,12 +152,12 @@ export default class VivaGraphMap extends React.Component {
                     var linkid = getVivaLinkID(object.node1_pub, object.node2_pub);
 
                     // Add link highlight
-                    this.graphics.getLinkUI(linkid).children[0].classList.add(mapstyles.selected);
-                    this.graphics.getLinkUI(linkid).children[1].classList.add(mapstyles.selected);
+                    this.graphics.getLinkUI(linkid).children[0].classList.add(styles.selected);
+                    this.graphics.getLinkUI(linkid).children[1].classList.add(styles.selected);
 
                     // Add node highlight
-                    this.graphics.getNodeUI(object.node1_pub).children[0].classList.add(mapstyles.selected);
-                    this.graphics.getNodeUI(object.node2_pub).children[0].classList.add(mapstyles.selected);
+                    this.graphics.getNodeUI(object.node1_pub).children[0].classList.add(styles.selected);
+                    this.graphics.getNodeUI(object.node2_pub).children[0].classList.add(styles.selected);
 
                     // Center graph if selection was not triggered by map
                     if (this.props.store.selectedObject.source != 'map')
@@ -189,9 +172,9 @@ export default class VivaGraphMap extends React.Component {
 
             // Hide other nodes/channels if something is selected
             if (object)
-                this.graphics.getSvgRoot().classList.add(mapstyles.hide);
+                this.graphics.getSvgRoot().classList.add(styles.hide);
             else
-                this.graphics.getSvgRoot().classList.remove(mapstyles.hide);
+                this.graphics.getSvgRoot().classList.remove(styles.hide);
         });
     }
 
@@ -215,11 +198,11 @@ export default class VivaGraphMap extends React.Component {
                 x: -boxWidth/2,
                 y: -6,
                 stroke: node.data.color,
-                class: mapstyles.node
+                class: styles.node
             });
 
             var text = Graph.svg('text', {
-                class: mapstyles.nodelabel,
+                class: styles.nodelabel,
                 y: 2
             });
 
@@ -249,11 +232,11 @@ export default class VivaGraphMap extends React.Component {
             // Create 2 lines with node colors
             var line1 = Graph.svg("line", {
                 stroke: this.nodeIndex[link.data.node1_pub].color,
-                class: mapstyles.link
+                class: styles.link
             });
             var line2 = Graph.svg("line", {
                 stroke: this.nodeIndex[link.data.node2_pub].color,
-                class: mapstyles.link
+                class: styles.link
             });
 
             // Group
@@ -349,10 +332,10 @@ export default class VivaGraphMap extends React.Component {
 
     render() {
         return (
-            <div style={styles.container}>
-                <div style={styles.container} ref={(mount) => { this.mount = mount }} />
+            <div>
+                <div className={styles.container} ref={(mount) => { this.mount = mount }} />
                 { this.state.loading ? (
-                <div style={styles.overlay}>
+                <div className={styles.overlay}>
                     <FontAwesome name='spinner' pulse size='2x' cssModule={FA} />
                 </div>
                 ) : '' }

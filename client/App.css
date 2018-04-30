@@ -2,7 +2,23 @@
 {
     position: relative;
     font-family: Roboto, sans-serif;
-    overflow:hidden;
+    overflow: hidden;
+}
+
+:global(.dark)
+{
+    color: #CCC;
+}
+
+input
+{
+    border: 1px solid #CCC;
+}
+
+:global(.dark) input
+{
+    background-color: #000;
+    color: #FFF;
 }
 
 svg { width: 100%; height: 100%;}
@@ -27,6 +43,11 @@ a
     font-weight: bold;
     padding-right: 10px;
     border-right: 1px solid #ddd;
+}
+
+:global(.dark) .datatable td:nth-child(1)
+{
+    border-color: #444;
 }
 
 .mapselect

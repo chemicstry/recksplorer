@@ -17,15 +17,13 @@ var styles = {
         fontSize: '11px',
         margin: 0,
         padding: '0 2px 0 2px',
-        border: 'none',
-        backgroundColor: '#ddd',
         width: '85px'
     },
     button: {
         fontSize: '11px',
         margin: 0,
         padding: '0 2px 0 2px',
-        border: 'none',
+        border: '1px solid #CCC',
         backgroundColor: '#891AFF',
         color: '#FFF',
         cursor: 'pointer'

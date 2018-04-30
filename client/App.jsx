@@ -47,19 +47,24 @@ export default class App extends React.Component {
         var map;
         switch (this.state.map)
         {
-            case 'vis':
-                map = (<VisGraphMap store={store}/>);
-                break;
             case 'viva':
+            case 'vivadark':
                 map = (<VivaGraphMap store={store} key="vivafixed"/>);
                 break;
             case 'vivaphys':
+            case 'vivaphysdark':
                 map = (<VivaGraphMap store={store} key="vivaphys" physics={true}/>);
                 break;
+            default:
+                map = (<VivaGraphMap store={store} key="vivafixed"/>);
         }
 
+        let dark = false;
+        if (this.state.map == 'vivadark' || this.state.map == 'vivaphysdark')
+            dark = true;
+
         return (
-        <div className={styles.app}>
+        <div className={`${styles.app} ${dark ? 'dark' : ''}`}>
             {map}
 
             <FixedContainer position='bottom-left' border='top-right'>
@@ -80,9 +85,10 @@ export default class App extends React.Component {
             <FixedContainer position='top-right'>
                 <Title>#recksplorer</Title>
                 <select value={this.state.map} onChange={(e) => this.onMapChange(e)} className={styles.mapselect}>
-                    <option value="vis">Vis.js (old)</option>
-                    <option value="viva">Viva (fixed)</option>
-                    <option value="vivaphys">Viva (physics)</option>
+                    <option value="viva">Light (fixed)</option>
+                    <option value="vivaphys">Light (physics)</option>
+                    <option value="vivadark">Dark (fixed)</option>
+                    <option value="vivaphysdark">Dark (physics)</option>
                 </select>
             </FixedContainer>
             <FixedContainer position='bottom-right' border='top-left'>

@@ -6,8 +6,7 @@ import { observer } from 'mobx-react';
 var styles = {
     container:{
         padding: '5px',
-        fontSize: '11px',
-        backgroundColor: '#FFFFFF'
+        fontSize: '11px'
     },
     tiny: {
         fontSize: '9px'

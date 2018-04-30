@@ -1,10 +1,5 @@
 import React from 'react';
-
-var styles = {
-    container:{
-        position: 'fixed'
-    },
-}
+import styles from './FixedContainer.css';
 
 const border = '1px solid #891AFF';
 
@@ -34,7 +29,7 @@ export default class FixedContainer extends React.Component {
         }
 
         return (
-        <div style={{...styles.container,...customStyle}}>
+        <div className={styles.container} style={customStyle}>
             {this.props.children}
         </div>
         );

@@ -4,8 +4,7 @@ import AppStyles from './App.css';
 var styles = {
     container:{
         padding: '5px',
-        fontSize: '11px',
-        backgroundColor: '#FFFFFF'
+        fontSize: '11px'
     }
 }
 
