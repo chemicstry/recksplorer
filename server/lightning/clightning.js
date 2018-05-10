@@ -119,7 +119,8 @@ module.exports = function (lightningPath) {
                     node2_pub: c.destination,
                     channel_id: c.short_channel_id,
                     chan_point: c.short_channel_id,
-                    last_update: c.last_update
+                    last_update: c.last_update,
+                    capacity: c.satoshis
                 });
             }
         });
